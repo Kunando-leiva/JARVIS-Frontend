@@ -18,13 +18,13 @@ function App() {
   const isProduction = process.env.NODE_ENV === 'production';
   
   // URLs según el entorno
-  const API_URL = isProduction 
-    ? 'https://jarvis-backend.vercel.app'  // Producción
-    : 'http://127.0.0.1:3001';              // Desarrollo local
-  
-  const WS_URL = isProduction
-    ? null  // WebSocket no soportado en Vercel (deshabilitar)
-    : 'ws://127.0.0.1:3001';                // WebSocket local
+ const API_URL = isProduction 
+  ? 'https://jarvis-backend-psi.vercel.app'  // ✅ correcto
+  : 'http://127.0.0.1:3001';
+
+const WS_URL = isProduction
+  ? null  // WebSocket no funciona en Vercel
+  : 'ws://127.0.0.1:3001';
   
   console.log(`🔧 Modo: ${isProduction ? 'PRODUCCIÓN' : 'DESARROLLO'}`);
   console.log(`📡 API URL: ${API_URL}`);
