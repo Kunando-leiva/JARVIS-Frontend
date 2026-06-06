@@ -14,25 +14,21 @@ function App() {
   const [isJarvisSpeaking, setIsJarvisSpeaking] = useState(false);
   const [animationMode, setAnimationMode] = useState('pulso_suave');
   
-  // ===== CONFIGURACIÓN DE URLs (DESARROLLO vs PRODUCCIÓN) =====
-  const isProduction = process.env.NODE_ENV === 'production';
-  
-  // API Key para producción
-  const API_KEY = isProduction ? 'jarvis_76354b2df2ecbf258b1c983c2526962b92e44c98d0be3a3ef109cc13b6ac9612_1780689759842' : '';
-  
-  // URLs según el entorno
-  const API_URL = isProduction 
-  ? 'https://jarvis-backend-psi.vercel.app'
-  : 'http://127.0.0.1:3001';
+ // ===== CONFIGURACIÓN DE URLs - FORZADO PARA PRODUCCIÓN =====
+const isProduction = true;  // Forzar producción
 
-  const WS_URL = isProduction
-    ? null  // WebSocket no funciona en Vercel
-    : 'ws://127.0.0.1:3001';
-  
-  console.log(`🔧 Modo: ${isProduction ? 'PRODUCCIÓN' : 'DESARROLLO'}`);
-  console.log(`📡 APIiiii URL: ${API_URL}`);
-  console.log(`🔌 WebSocket: ${WS_URL || 'Deshabilitado en producción'}`);
-  console.log(`🔑 API Key: ${API_KEY ? 'Configurada' : 'No necesaria'}`);
+// API Key para producción
+const API_KEY = 'jarvis_76354b2df2ecbf258b1c983c2526962b92e44c98d0be3a3ef109cc13b6ac9612_1780689759842';
+
+// URL FORZADA del backend correcto
+const API_URL = 'https://jarvis-backend-psi.vercel.app';
+
+const WS_URL = null;  // WebSocket deshabilitado
+
+console.log('🔧 Modo: PRODUCCIÓN FORZADO');
+console.log('📡 API URL:', API_URL);
+console.log('🔌 WebSocket: Deshabilitado en producción');
+console.log('🔑 API Key: Configurada');
   
   // COLA DE COMANDOS
   const commandQueue = useRef([]);
