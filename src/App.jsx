@@ -14,11 +14,17 @@ function App() {
   const [isJarvisSpeaking, setIsJarvisSpeaking] = useState(false);
   const [animationMode, setAnimationMode] = useState('pulso_suave');
   
-  // ===== CONFIGURACIÓN DE URLs - FORZADO PARA PRODUCCIÓN =====
-  const isProduction = true;
-  const API_KEY = 'jarvis_76354b2df2ecbf258b1c983c2526962b92e44c98d0be3a3ef109cc13b6ac9612_1780689759842';
-  const API_URL = 'https://jarvis-backend-psi.vercel.app';
-  const WS_URL = null;
+    // ===== CONFIGURACIÓN DE URLs =====
+  const isProduction = window.location.hostname !== 'localhost' && 
+                       window.location.hostname !== '127.0.0.1';
+  
+  const API_KEY = isProduction ? 'jarvis_76354b2df2ecbf258b1c983c2526962b92e44c98d0be3a3ef109cc13b6ac9612_1780689759842' : '';
+  const API_URL = isProduction ? 'https://jarvis-backend-psi.vercel.app' : 'http://127.0.0.1:3001';
+  const WS_URL = isProduction ? null : 'ws://127.0.0.1:3001';
+  
+  const getHeaders = () => {
+    return API_KEY ? { 'x-api-key': API_KEY } : {};
+  };
 
   // COLA DE COMANDOS
   const commandQueue = useRef([]);
@@ -38,9 +44,6 @@ function App() {
   const threeContainerRef = useRef(null);
   const threeInitializedRef = useRef(false);
   
-  const getHeaders = () => {
-    return API_KEY ? { 'x-api-key': API_KEY } : {};
-  };
   
   // ===== FUNCIONES PARA ARCHIVOS =====
   const handleListFiles = async () => {
