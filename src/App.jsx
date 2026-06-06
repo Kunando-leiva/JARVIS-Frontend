@@ -17,18 +17,22 @@ function App() {
   // ===== CONFIGURACIÓN DE URLs (DESARROLLO vs PRODUCCIÓN) =====
   const isProduction = process.env.NODE_ENV === 'production';
   
+  // API Key para producción
+  const API_KEY = isProduction ? 'jarvis_76354b2df2ecbf258b1c983c2526962b92e44c98d0be3a3ef109cc13b6ac9612_1780689759842' : '';
+  
   // URLs según el entorno
- const API_URL = isProduction 
-  ? 'https://jarvis-backend-psi.vercel.app'  // ✅ correcto
-  : 'http://127.0.0.1:3001';
+  const API_URL = isProduction 
+    ? 'https://jarvis-backend-psi.vercel.app'  // ✅ correcto
+    : 'http://127.0.0.1:3001';
 
-const WS_URL = isProduction
-  ? null  // WebSocket no funciona en Vercel
-  : 'ws://127.0.0.1:3001';
+  const WS_URL = isProduction
+    ? null  // WebSocket no funciona en Vercel
+    : 'ws://127.0.0.1:3001';
   
   console.log(`🔧 Modo: ${isProduction ? 'PRODUCCIÓN' : 'DESARROLLO'}`);
   console.log(`📡 API URL: ${API_URL}`);
   console.log(`🔌 WebSocket: ${WS_URL || 'Deshabilitado en producción'}`);
+  console.log(`🔑 API Key: ${API_KEY ? 'Configurada' : 'No necesaria'}`);
   
   // COLA DE COMANDOS
   const commandQueue = useRef([]);
@@ -47,6 +51,11 @@ const WS_URL = isProduction
   
   const threeContainerRef = useRef(null);
   const threeInitializedRef = useRef(false);
+  
+  // Configuración de headers para axios
+  const getHeaders = () => {
+    return API_KEY ? { 'x-api-key': API_KEY } : {};
+  };
   
   useEffect(() => {
     isJarvisSpeakingRef.current = isJarvisSpeaking;
@@ -345,7 +354,10 @@ const WS_URL = isProduction
     setConversation(prev => [...prev, { role: 'user', content: text, timestamp: Date.now() }]);
     
     try {
-      const res = await axios.post(`${API_URL}/api/ask`, { text, userName, history: conversation.slice(-5) });
+      const res = await axios.post(`${API_URL}/api/ask`, 
+        { text, userName, history: conversation.slice(-5) },
+        { headers: getHeaders() }
+      );
       
       setResponse(res.data.text);
       setConversation(prev => [...prev, { role: 'jarvis', content: res.data.text, timestamp: Date.now() }]);
@@ -383,7 +395,13 @@ const WS_URL = isProduction
   // ===== TEXTO A VOZ =====
   const speakText = async (text) => {
     try {
-      const res = await axios.post(`${API_URL}/api/speak`, { text }, { responseType: 'blob' });
+      const res = await axios.post(`${API_URL}/api/speak`, 
+        { text }, 
+        { 
+          responseType: 'blob',
+          headers: getHeaders()
+        }
+      );
       
       if (res.data.type === 'audio/mpeg') {
         const audioUrl = URL.createObjectURL(res.data);
