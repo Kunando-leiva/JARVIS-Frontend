@@ -22,8 +22,8 @@ function App() {
   
   // URLs según el entorno
   const API_URL = isProduction 
-    ? 'https://jarvis-backend-psi.vercel.app'  // ✅ correcto
-    : 'http://127.0.0.1:3001';
+  ? 'https://jarvis-backend-psi.vercel.app'
+  : 'http://127.0.0.1:3001';
 
   const WS_URL = isProduction
     ? null  // WebSocket no funciona en Vercel
