@@ -112,22 +112,28 @@ function App() {
     setIsProcessing(false);
   };
 
-  // ===== DETECCIÓN DE COMANDOS LOCALES =====
-  const detectLocalCommand = (text) => {
+  // ===== DETECCIÓN DE COMANDOS LOCALES (devuelve objeto) =====
+  const detectLocalCommandReturn = (text) => {
     const lowerText = text.toLowerCase();
+    
+    // Crear archivo
+    if (lowerText.includes('crea el archivo') || lowerText.includes('crea un archivo')) {
+      const match = text.match(/(?:crea el archivo|crea un archivo)\s+(\S+\.js)/i);
+      if (match) {
+        return { type: 'CREATE_FILE', filePath: match[1] };
+      }
+    }
     
     // Listar archivos
     if (lowerText.includes('lista tus archivos') || lowerText.includes('qué archivos tienes') || lowerText.includes('listar archivos')) {
-      handleListFiles();
-      return true;
+      return { type: 'LIST_FILES' };
     }
     
     // Leer código
     if (lowerText.includes('lee el archivo') || lowerText.includes('muestra el código de')) {
       const match = text.match(/(?:lee el archivo|muestra el código de)\s+(\S+\.js)/i);
       if (match) {
-        handleReadCode(match[1]);
-        return true;
+        return { type: 'READ_CODE', filePath: match[1] };
       }
     }
     
@@ -135,11 +141,22 @@ function App() {
     if (lowerText.includes('estadísticas del archivo') || lowerText.includes('stats del archivo')) {
       const match = text.match(/(?:estadísticas del archivo|stats del archivo)\s+(\S+\.js)/i);
       if (match) {
-        handleCodeStats(match[1]);
-        return true;
+        return { type: 'CODE_STATS', filePath: match[1] };
       }
     }
     
+    return null;
+  };
+
+  // Versión que ejecuta directamente (para compatibilidad)
+  const detectLocalCommand = (text) => {
+    const result = detectLocalCommandReturn(text);
+    if (result) {
+      if (result.type === 'LIST_FILES') handleListFiles();
+      else if (result.type === 'READ_CODE') handleReadCode(result.filePath);
+      else if (result.type === 'CODE_STATS') handleCodeStats(result.filePath);
+      return true;
+    }
     return false;
   };
 
@@ -481,9 +498,68 @@ function App() {
   
   // ===== ENVÍO PRINCIPAL =====
   const sendToJarvis = async (text) => {
-    // Primero detectar comandos locales
-    const localHandled = detectLocalCommand(text);
-    if (localHandled) return;
+    // Primero detectar comandos locales que requieren procesamiento especial
+    const localCommand = detectLocalCommandReturn(text);
+    
+    if (localCommand) {
+      if (localCommand.type === 'CREATE_FILE') {
+        setIsProcessing(true);
+        const filePath = localCommand.filePath;
+        
+        // Extraer el código del mensaje (lo que viene después de "con este código:")
+        let code = text;
+        const codeMatch = text.match(/con este código:\s*([\s\S]+)/i);
+        if (codeMatch) {
+          code = codeMatch[1];
+        } else {
+          // Si no hay código, preguntar
+          const message = `¿Qué código quieres poner en ${filePath}? Escríbelo y te lo guardaré.`;
+          setResponse(message);
+          setConversation(prev => [...prev, { role: 'jarvis', content: message, timestamp: Date.now() }]);
+          await speakText(message);
+          window.pendingFilePath = filePath;
+          window.waitingForCode = true;
+          setIsProcessing(false);
+          return;
+        }
+        
+        try {
+          const res = await axios.post(`${API_URL}/api/create-file`, 
+            { filePath, content: code },
+            { headers: getHeaders() }
+          );
+          
+          if (res.data.success) {
+            const message = `✅ Archivo ${filePath} creado correctamente.`;
+            setResponse(message);
+            setConversation(prev => [...prev, { role: 'jarvis', content: message, timestamp: Date.now() }]);
+            await speakText(message);
+          } else {
+            throw new Error(res.data.error);
+          }
+        } catch (error) {
+          const errorMsg = `No pude crear el archivo: ${error.response?.data?.error || error.message}`;
+          setResponse(errorMsg);
+          await speakText(errorMsg);
+        }
+        setIsProcessing(false);
+        return;
+      }
+      
+      // Procesar otros comandos locales
+      if (localCommand.type === 'LIST_FILES') {
+        handleListFiles();
+        return;
+      }
+      if (localCommand.type === 'READ_CODE') {
+        handleReadCode(localCommand.filePath);
+        return;
+      }
+      if (localCommand.type === 'CODE_STATS') {
+        handleCodeStats(localCommand.filePath);
+        return;
+      }
+    }
     
     // Luego comandos especiales de voz
     if (handleSpecialCommand(text)) return;
@@ -498,135 +574,126 @@ function App() {
     await sendToJarvisInternal(text);
   };
   
-  // ===== TEXTO A VOZ CON VOZ PERSONALIZADA =====
-// ===== TEXTO A VOZ - ESTILO JARVIS (acento británico) =====
-const speakText = async (text) => {
-  // Detener cualquier voz anterior
-  window.speechSynthesis.cancel();
-  
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'en-GB';     // Acento británico como JARVIS
-  utterance.rate = 0.85;        // Más lento, más pausado
-  utterance.pitch = 0.9;        // Tono grave
-  utterance.volume = 1.0;
-  
-  // Función para seleccionar la mejor voz disponible
-  const setBestVoice = () => {
-    const voices = window.speechSynthesis.getVoices();
+  // ===== TEXTO A VOZ =====
+  const speakText = async (text) => {
+    window.speechSynthesis.cancel();
     
-    // Priorizar voces británicas masculinas
-    const preferredVoices = [
-      'Google UK English Male',
-      'Microsoft George',
-      'Microsoft David', 
-      'Samantha',
-      'Daniel',
-      'Google UK English Female'
-    ];
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-MX';
+    utterance.rate = 0.85;
+    utterance.pitch = 0.9;
+    utterance.volume = 1.0;
     
-    let selectedVoice = voices.find(v => 
-      (v.lang === 'en-GB' || v.lang === 'en-UK') && 
-      preferredVoices.some(p => v.name.includes(p))
-    );
+    const setBestVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoices = [
+        'Google UK English Male',
+        'Microsoft George',
+        'Microsoft David', 
+        'Samantha',
+        'Daniel',
+        'Google UK English Female'
+      ];
+      
+      let selectedVoice = voices.find(v => 
+        (v.lang === 'en-GB' || v.lang === 'en-UK') && 
+        preferredVoices.some(p => v.name.includes(p))
+      );
+      
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang === 'en-GB');
+      }
+      
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        console.log('🎤 Voz JARVIS seleccionada:', selectedVoice.name);
+      }
+    };
     
-    // Si no encuentra una británica, usar cualquier voz en inglés
-    if (!selectedVoice) {
-      selectedVoice = voices.find(v => v.lang === 'en-GB');
+    setBestVoice();
+    
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = setBestVoice;
     }
     
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-      console.log('🎤 Voz JARVIS seleccionada:', selectedVoice.name);
-    }
+    utterance.onstart = () => {
+      console.log('🗣️ JARVIS comenzó a hablar');
+      setIsJarvisSpeaking(true);
+      isBusy.current = true;
+    };
+    
+    utterance.onend = () => {
+      console.log('✅ JARVIS terminó de hablar');
+      setIsJarvisSpeaking(false);
+      isBusy.current = false;
+      processQueue();
+    };
+    
+    utterance.onerror = (event) => {
+      console.error('Error en voz:', event);
+      setIsJarvisSpeaking(false);
+      isBusy.current = false;
+      processQueue();
+    };
+    
+    window.speechSynthesis.speak(utterance);
   };
-  
-  setBestVoice();
-  
-  // Asegurar que las voces están cargadas
-  if (window.speechSynthesis.getVoices().length === 0) {
-    window.speechSynthesis.onvoiceschanged = setBestVoice;
-  }
-  
-  utterance.onstart = () => {
-    console.log('🗣️ JARVIS comenzó a hablar');
-    setIsJarvisSpeaking(true);
-    isBusy.current = true;
-  };
-  
-  utterance.onend = () => {
-    console.log('✅ JARVIS terminó de hablar');
-    setIsJarvisSpeaking(false);
-    isBusy.current = false;
-    processQueue();
-  };
-  
-  utterance.onerror = (event) => {
-    console.error('Error en voz:', event);
-    setIsJarvisSpeaking(false);
-    isBusy.current = false;
-    processQueue();
-  };
-  
-  window.speechSynthesis.speak(utterance);
-};
 
-// ===== VOZ PREDETERMINADA (FALLBACK) =====
-const usarVozPredeterminada = (text) => {
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'es-ES';
-  utterance.rate = 0.9;
-  
-  utterance.onstart = () => {
-    console.log('🗣️ JARVIS comenzó a hablar (fallback)');
-    setIsJarvisSpeaking(true);
-    isBusy.current = true;
+  const usarVozPredeterminada = (text) => {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    
+    utterance.onstart = () => {
+      console.log('🗣️ JARVIS comenzó a hablar (fallback)');
+      setIsJarvisSpeaking(true);
+      isBusy.current = true;
+    };
+    
+    utterance.onend = () => {
+      console.log('✅ JARVIS terminó de hablar');
+      setIsJarvisSpeaking(false);
+      isBusy.current = false;
+      processQueue();
+    };
+    
+    utterance.onerror = () => {
+      setIsJarvisSpeaking(false);
+      isBusy.current = false;
+      processQueue();
+    };
+    
+    window.speechSynthesis.speak(utterance);
   };
-  
-  utterance.onend = () => {
-    console.log('✅ JARVIS terminó de hablar');
-    setIsJarvisSpeaking(false);
-    isBusy.current = false;
-    processQueue();
-  };
-  
-  utterance.onerror = () => {
-    setIsJarvisSpeaking(false);
-    isBusy.current = false;
-    processQueue();
-  };
-  
-  window.speechSynthesis.speak(utterance);
-};
 
-// ===== REPRODUCIR VOZ PERSONALIZADA DIRECTAMENTE (jarvis.mp3) =====
-const reproducirVozPersonalizada = () => {
-  const audio = new Audio(`${API_URL}/api/voice/jarvis.mp3`);
-  currentAudioRef.current = audio;
-  
-  audio.onplay = () => {
-    console.log('🗣️ Reproduciendo voz personalizada de JARVIS');
-    setIsJarvisSpeaking(true);
-    isBusy.current = true;
+  const reproducirVozPersonalizada = () => {
+    const audio = new Audio(`${API_URL}/api/voice/jarvis.mp3`);
+    currentAudioRef.current = audio;
+    
+    audio.onplay = () => {
+      console.log('🗣️ Reproduciendo voz personalizada de JARVIS');
+      setIsJarvisSpeaking(true);
+      isBusy.current = true;
+    };
+    
+    audio.onended = () => {
+      console.log('✅ Voz personalizada terminada');
+      setIsJarvisSpeaking(false);
+      isBusy.current = false;
+      currentAudioRef.current = null;
+      processQueue();
+    };
+    
+    audio.onerror = () => {
+      console.error('Error con voz personalizada');
+      setIsJarvisSpeaking(false);
+      isBusy.current = false;
+      processQueue();
+    };
+    
+    audio.play();
   };
-  
-  audio.onended = () => {
-    console.log('✅ Voz personalizada terminada');
-    setIsJarvisSpeaking(false);
-    isBusy.current = false;
-    currentAudioRef.current = null;
-    processQueue();
-  };
-  
-  audio.onerror = () => {
-    console.error('Error con voz personalizada');
-    setIsJarvisSpeaking(false);
-    isBusy.current = false;
-    processQueue();
-  };
-  
-  audio.play();
-};
   
   // ===== RECONOCIMIENTO DE VOZ =====
   const initSpeechRecognition = () => {
