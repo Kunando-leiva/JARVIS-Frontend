@@ -25,10 +25,7 @@ const API_URL = 'https://jarvis-backend-psi.vercel.app';
 
 const WS_URL = null;  // WebSocket deshabilitado
 
-// console.log('🔧 Modo: PRODUCCIÓN FORZADO');
-// console.log('📡 API URL:', API_URL);
-// console.log('🔌 WebSocket: Deshabilitado en producción');
-// console.log('🔑 API Key: Configurada');
+
   
   // COLA DE COMANDOS
   const commandQueue = useRef([]);
