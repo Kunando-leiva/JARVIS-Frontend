@@ -30,7 +30,7 @@ function App() {
     : 'ws://127.0.0.1:3001';
   
   console.log(`🔧 Modo: ${isProduction ? 'PRODUCCIÓN' : 'DESARROLLO'}`);
-  console.log(`📡 API URL: ${API_URL}`);
+  console.log(`📡 APIiiii URL: ${API_URL}`);
   console.log(`🔌 WebSocket: ${WS_URL || 'Deshabilitado en producción'}`);
   console.log(`🔑 API Key: ${API_KEY ? 'Configurada' : 'No necesaria'}`);
   
