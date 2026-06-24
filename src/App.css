@@ -3,6 +3,28 @@
   padding: 0;
   box-sizing: border-box;
 }
+/* En App.css, agregar al principio */
+:root {
+  --assistant-color: #1b38da;
+}
+
+.jarvis-active {
+  --assistant-color: #1b38da;
+}
+
+.gideon-active {
+  --assistant-color: #b631af;
+}
+
+/* Cambiar todos los colores fijos por var(--assistant-color) */
+.device-card {
+  border: 1px solid rgba(var(--assistant-color), 0.3);
+}
+
+.sphere {
+  border: 2px solid rgba(var(--assistant-color), 0.7);
+}
+
 
 body {
   background: #000000;

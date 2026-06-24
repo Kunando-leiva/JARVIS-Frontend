@@ -1,4 +1,404 @@
-// src/App.jsx
+================================================================================
+📦 PROYECTO JARVIS - BUNDLE DE CÓDIGO
+📅 Fecha: 2026-06-24
+📁 Directorio base: C:\Users\Soledad\Desktop\JARVIS-Frontend
+📄 Archivos incluidos: 7
+================================================================================
+
+📂 ESTRUCTURA DEL PROYECTO
+--------------------------------------------------
+📄 index.html
+📄 jsconfig.json
+📄 package.json
+📁 src/
+  📄 App.css
+  📄 App.jsx
+  📄 index.jsx
+📄 vite.config.js
+
+
+================================================================================
+
+================================================================================
+📄 ARCHIVO: index.html
+📏 Tamaño: 0.62 KB
+📝 Tipo: html
+📍 Ruta: C:\Users\Soledad\Desktop\JARVIS-Frontend\index.html
+================================================================================
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * ws: wss:;">
+    <title>J.A.R.V.I.S. - Asistente Inteligente</title>
+    <style>
+      body { margin: 0; padding: 0; background: #000; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.jsx"></script>
+  </body>
+</html>
+```
+
+================================================================================
+📄 ARCHIVO: jsconfig.json
+📏 Tamaño: 0.24 KB
+📝 Tipo: json
+📍 Ruta: C:\Users\Soledad\Desktop\JARVIS-Frontend\jsconfig.json
+================================================================================
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "jsx": "react",
+    "checkJs": false
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+```
+
+================================================================================
+📄 ARCHIVO: package.json
+📏 Tamaño: 0.49 KB
+📝 Tipo: json
+📍 Ruta: C:\Users\Soledad\Desktop\JARVIS-Frontend\package.json
+================================================================================
+
+```json
+{
+  "name": "jarvis-frontend",
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@types/three": "^0.184.1",
+    "axios": "^1.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "three": "^0.128.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.8"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.43"
+  }
+}
+```
+
+================================================================================
+📄 ARCHIVO: src\App.css
+📏 Tamaño: 7.13 KB
+📝 Tipo: css
+📍 Ruta: C:\Users\Soledad\Desktop\JARVIS-Frontend\src\App.css
+================================================================================
+
+```css
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* En App.css, agregar al principio */
+:root {
+  --assistant-color: #1b38da;
+}
+
+.jarvis-active {
+  --assistant-color: #1b38da;
+}
+
+.gideon-active {
+  --assistant-color: #b631af;
+}
+
+/* Cambiar todos los colores fijos por var(--assistant-color) */
+.device-card {
+  border: 1px solid rgba(var(--assistant-color), 0.3);
+}
+
+.sphere {
+  border: 2px solid rgba(var(--assistant-color), 0.7);
+}
+
+
+body {
+  background: #000000;
+  font-family: 'Segoe UI', 'Courier New', monospace;
+  color: #00e5ff;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Contenedor para la esfera 3D */
+.three-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: #000000;
+}
+
+/* Overlay de UI */
+.ui-overlay {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.ui-overlay > * {
+  pointer-events: auto;
+}
+
+/* Círculo de estado en el centro */
+.sphere-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  pointer-events: none;
+}
+
+.sphere {
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 229, 255, 0.2), rgba(0, 100, 255, 0.05));
+  border-radius: 50%;
+  border: 2px solid rgba(0, 229, 255, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  transition: transform 0.05s ease;
+  animation: pulse-border 3s infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(0, 229, 255, 0.4); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
+  50% { border-color: rgba(0, 229, 255, 0.9); box-shadow: 0 0 30px rgba(0, 229, 255, 0.4); }
+}
+
+.sphere-text { font-size: 12px; font-weight: bold; letter-spacing: 3px; text-shadow: 0 0 8px #00e5ff; }
+.sphere-status { font-size: 8px; margin-top: 6px; opacity: 0.7; }
+
+/* Botones */
+.devices-grid {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  z-index: 20;
+  max-width: 480px;
+}
+
+.device-card {
+  background: rgba(10, 10, 26, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  color: #00e5ff;
+}
+
+.device-card:hover { border-color: #00e5ff; transform: scale(1.02); background: rgba(0, 229, 255, 0.15); }
+.spotify-control { background: rgba(29, 185, 84, 0.2); border-color: #1DB954; color: #1DB954; }
+.spotify-control:hover { background: rgba(29, 185, 84, 0.3); }
+
+/* Panel de conversación */
+.conversation-panel {
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+  width: 300px;
+  max-height: 260px;
+  background: rgba(10, 10, 26, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 20;
+}
+
+.panel-header { padding: 8px 12px; font-size: 10px; font-weight: bold; border-bottom: 1px solid rgba(0, 229, 255, 0.2); }
+.conversation-list { padding: 8px; max-height: 210px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.msg { display: flex; flex-direction: column; gap: 2px; }
+.msg.user .msg-role { color: #00e5ff; }
+.msg.jarvis .msg-role { color: #ffaa00; }
+.msg-role { font-size: 8px; opacity: 0.7; }
+.msg-text { font-size: 10px; word-break: break-word; }
+
+/* Panel de control */
+.control-panel-glass {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  width: 200px;
+  background: rgba(10, 10, 26, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-btn {
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  color: #00e5ff;
+  padding: 6px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.control-btn:hover { background: rgba(0, 229, 255, 0.25); }
+
+.info-row { display: flex; justify-content: space-between; font-size: 9px; opacity: 0.7; padding: 5px 0; border-top: 1px solid rgba(0, 229, 255, 0.2); border-bottom: 1px solid rgba(0, 229, 255, 0.2); }
+.transcript, .response { font-size: 9px; padding: 5px; background: rgba(0, 0, 0, 0.5); border-radius: 5px; word-break: break-word; }
+.response { color: #ffcc00; border-left: 2px solid #ffcc00; }
+
+/* Input de texto */
+.command-input {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  background: rgba(10, 10, 26, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  border-radius: 30px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 30;
+}
+
+.command-prefix { color: #00e5ff; font-weight: bold; font-size: 14px; }
+.command-input input { flex: 1; background: transparent; border: none; color: #fff; font-family: monospace; font-size: 12px; outline: none; }
+.command-input input::placeholder { color: rgba(255, 255, 255, 0.4); }
+
+/* Scroll */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); }
+::-webkit-scrollbar-thumb { background: #00e5ff; border-radius: 3px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .devices-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; top: 10px; right: 10px; max-width: 200px; }
+  .device-card { font-size: 8px; padding: 4px 6px; }
+  .conversation-panel { width: 240px; bottom: 10px; left: 10px; max-height: 200px; }
+  .control-panel-glass { width: 160px; bottom: 10px; right: 10px; padding: 8px; }
+  .command-input { width: 90%; padding: 6px 12px; bottom: 10px; }
+  .command-input input { font-size: 10px; }
+  .sphere { width: 70px; height: 70px; }
+  .sphere-text { font-size: 8px; }
+}
+
+/* Selector de patrones de animación */
+.animation-controls {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  display: flex;
+  gap: 8px;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 15px;
+  border-radius: 30px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.mode-btn {
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  color: #00e5ff;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  background: rgba(0, 229, 255, 0.3);
+  transform: scale(1.02);
+}
+
+.mode-btn.active {
+  background: #00e5ff;
+  color: #000;
+  border-color: #00e5ff;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+/* Ajuste responsive para los botones de patrón */
+@media (max-width: 768px) {
+  .animation-controls {
+    top: auto;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    gap: 5px;
+  }
+  .mode-btn {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+}
+```
+
+================================================================================
+📄 ARCHIVO: src\App.jsx
+📏 Tamaño: 53.94 KB
+📝 Tipo: jsx
+📍 Ruta: C:\Users\Soledad\Desktop\JARVIS-Frontend\src\App.jsx
+================================================================================
+
+```jsx
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
@@ -17,37 +417,40 @@ function App() {
   const [showHelp, setShowHelp] = useState(false);
   const [cooldown, setCooldown] = useState(false);
 
-  const [inputText, setInputText] = useState('');
-  const [isSending, setIsSending] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
 
+  // Estados para archivos
   const [inactivityTimer, setInactivityTimer] = useState(null);
   const [conversationMode, setConversationMode] = useState(false);
   const [conversationTimer, setConversationTimer] = useState(null);
   const conversationModeRef = useRef(false);
 
+  // Información de ubicación
   const [userLocation, setUserLocation] = useState(null);
   const [locationCity, setLocationCity] = useState('Buenos Aires');
 
+  // Colores dinámicos para asistentes
   const [assistantColor, setAssistantColor] = useState('#1b38da');
   const [currentAssistant, setCurrentAssistant] = useState('JARVIS');
 
+  // Configuración de URLs
   const isProduction = window.location.hostname !== 'localhost' && 
                        window.location.hostname !== '127.0.0.1';
 
-  const API_KEY = isProduction ? 'tu_api_key_aqui' : '';
-  const API_URL = isProduction ? 'https://tu-backend.vercel.app' : 'http://127.0.0.1:3001';
-  const WS_URL = isProduction ? null : 'ws://localhost:3001';
+  const API_KEY = isProduction ? 'jarvis_76354b2df2ecbf258b1c983c2526962b92e44c98d0be3a3ef109cc13b6ac9612_1780689759842' : '';
+  const API_URL = isProduction ? 'https://jarvis-backend-psi.vercel.app' : 'http://127.0.0.1:3001';
+  const WS_URL = isProduction ? null : 'ws://127.0.0.1:3001';
 
   const getHeaders = () => {
     return API_KEY ? { 'x-api-key': API_KEY } : {};
   };
 
-  // ===== REFS =====
+  // Refs
   const commandQueue = useRef([]);
   const isBusy = useRef(false);
   const currentAudioRef = useRef(null);
   const assistantColorRef = useRef(assistantColor);
+  const recognitionRef = useRef(null);
   const wsRef = useRef(null);
   const mediaStreamRef = useRef(null);
   const audioContextRef = useRef(null);
@@ -58,37 +461,18 @@ function App() {
   const isJarvisSpeakingRef = useRef(isJarvisSpeaking);
   const threeContainerRef = useRef(null);
   const threeInitializedRef = useRef(false);
-  
-  // ==== REFS PARA RECONOCIMIENTO ====
-  const isMounted = useRef(true);
-  const isStartingRecognition = useRef(false);
-  const recognitionInstance = useRef(null);
-  const restartTimeoutRef = useRef(null);
-  const isListeningRef = useRef(false);
-  const isAwakeRef = useRef(true);
 
-  // ===== SINCRONIZAR REFS =====
+  // Sincronizar ref del color
   useEffect(() => {
     assistantColorRef.current = assistantColor;
   }, [assistantColor]);
 
+  // Sincronizar ref del modo conversación
   useEffect(() => {
     conversationModeRef.current = conversationMode;
   }, [conversationMode]);
 
-  useEffect(() => {
-    isJarvisSpeakingRef.current = isJarvisSpeaking;
-  }, [isJarvisSpeaking]);
-
-  useEffect(() => {
-    isListeningRef.current = isListening;
-  }, [isListening]);
-
-  useEffect(() => {
-    isAwakeRef.current = isAwake;
-  }, [isAwake]);
-
-  // ===== FUNCIONES DE ARCHIVOS =====
+  // ===== FUNCIONES PARA ARCHIVOS =====
   const handleListFiles = async () => {
     setIsProcessing(true);
     try {
@@ -183,6 +567,10 @@ function App() {
     return null;
   };
 
+  useEffect(() => {
+    isJarvisSpeakingRef.current = isJarvisSpeaking;
+  }, [isJarvisSpeaking]);
+
   const processQueue = async () => {
     if (isBusy.current) return;
     if (commandQueue.current.length === 0) return;
@@ -212,6 +600,7 @@ function App() {
     console.log('🔇 Asistente ha dejado de hablar');
   };
 
+  // ===== ACTIVAR MODO CONVERSACIÓN (MODIFICADO) =====
   const activateConversationMode = () => {
     if (inactivityTimer) {
       clearTimeout(inactivityTimer);
@@ -222,51 +611,26 @@ function App() {
     setConversationMode(true);
     conversationModeRef.current = true;
     console.log('💬 Modo conversación ACTIVADO');
+    console.log('💬 El timer comenzará cuando JARVIS termine de hablar');
+    // ⚠️ NO se inicia timer aquí
   };
 
-  const startInactivityTimer = () => {
+  // ===== REINICIAR TIMER DE INACTIVIDAD (MODIFICADO - SOLO LIMPIA) =====
+  const resetInactivityTimer = () => {
+    console.log('🕐 resetInactivityTimer llamado - conversationMode:', conversationModeRef.current, 'isJarvisSpeaking:', isJarvisSpeaking);
+    
+    // Limpiar timer anterior
     if (inactivityTimer) {
       clearTimeout(inactivityTimer);
       setInactivityTimer(null);
-      console.log('⏰ Timer anterior limpiado antes de iniciar nuevo');
+      console.log('⏰ Timer anterior limpiado');
     }
     
-    if (!conversationModeRef.current) {
-      console.log('⏸️ Timer no iniciado: modo conversación inactivo');
-      return;
-    }
-    
-    if (isJarvisSpeaking) {
-      console.log('⏸️ Timer no iniciado: JARVIS está hablando');
-      return;
-    }
-    
-    console.log('🕐 INICIANDO timer de inactividad (90 segundos)...');
-    
-    const timer = setTimeout(() => {
-      console.log('🔍🔍🔍 VERIFICANDO DESACTIVACIÓN después de 90s 🔍🔍🔍');
-      console.log('conversationMode:', conversationModeRef.current);
-      console.log('isJarvisSpeaking:', isJarvisSpeaking);
-      console.log('isProcessing:', isProcessing);
-      
-      if (conversationModeRef.current && !isJarvisSpeaking && !isProcessing) {
-        setConversationMode(false);
-        conversationModeRef.current = false;
-        console.log('💬💬💬 Modo conversación DESACTIVADO por inactividad 💬💬💬');
-        speakText("Modo conversación desactivado por inactividad. Di Jarvis cuando me necesites.");
-      } else {
-        console.log('⏸️ Desactivación cancelada - hay actividad');
-        if (conversationModeRef.current) {
-          startInactivityTimer();
-        }
-      }
-      setInactivityTimer(null);
-    }, 90000);
-    
-    setInactivityTimer(timer);
-    console.log('⏰ Timer de inactividad INICIADO (90 segundos)');
+    // SOLO limpiar, NO iniciar nuevo timer
+    console.log('⏸️ Timer limpiado (se iniciará cuando JARVIS termine de hablar)');
   };
 
+  // ===== OBTENER UBICACIÓN DEL USUARIO =====
   const getUserLocation = () => {
     if (!navigator.geolocation) {
       console.log('Geolocalización no soportada');
@@ -298,7 +662,7 @@ function App() {
     );
   };
 
-  // ===== VISUALIZACIÓN 3D =====
+  // ===== INICIALIZAR VISUALIZACIÓN 3D =====
   useEffect(() => {
     if (threeInitializedRef.current || !threeContainerRef.current) return;
     
@@ -476,120 +840,26 @@ function App() {
     initThree();
   }, [voiceLevel, animationMode, assistantColor]);
 
-  // ===== WEBSOCKET =====
-  const wsReconnectTimeout = useRef(null);
-  const wsInstance = useRef(null);
-  const isConnectingWS = useRef(false);
-
   const connectWebSocket = () => {
-  if (!WS_URL) {
-    console.warn('⚠️ WebSocket no configurado (modo producción)');
-    return;
-  }
-  
-  if (isConnectingWS.current) {
-    console.log('🔌 Ya se está conectando...');
-    return;
-  }
-  
-  if (wsInstance.current) {
-    const state = wsInstance.current.readyState;
-    if (state === WebSocket.OPEN) {
-      console.log('🔌 WebSocket ya está abierto');
-      return;
-    }
-    if (state === WebSocket.CONNECTING) {
-      console.log('🔌 WebSocket ya está conectando');
-      return;
-    }
+    if (!WS_URL) return;
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) return;
     try {
-      wsInstance.current.close();
-    } catch (e) {}
-    wsInstance.current = null;
-  }
-  
-  isConnectingWS.current = true;
-  
-  try {
-    console.log(`🔌 Intentando conectar a ${WS_URL}...`);
-    const ws = new WebSocket(WS_URL);
-    wsInstance.current = ws;
-    
-    ws.onopen = () => {
-      isConnectingWS.current = false;
-      console.log('🔌 WebSocket conectado exitosamente');
-      
-      // ✅ Enviar ping inicial después de conectar
-      try {
-        ws.send(JSON.stringify({ event: 'ping' }));
-        console.log('📤 Ping inicial enviado');
-      } catch (e) {
-        console.error('Error enviando ping inicial:', e);
-      }
-    };
-    
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        console.log('📨 Mensaje WebSocket recibido:', data);
-        
-        // ✅ Manejar diferentes tipos de eventos
-        if (data.event === 'system_ready') {
-          console.log('📡 Sistema listo:', data.message);
-        } else if (data.event === 'pong') {
-          console.log('🏓 Pong recibido del servidor');
-        } else if (data.type === 'action_result' && data.result?.message) {
-          setConversation(prev => [...prev, { 
-            role: currentAssistant.toLowerCase(), 
-            content: data.result.message, 
-            timestamp: Date.now() 
-          }]);
-        } else {
-          console.log('📨 Evento no manejado:', data.event || 'unknown');
-        }
-      } catch (e) {
-        console.error('Error procesando mensaje WebSocket:', e);
-      }
-    };
-    
-    ws.onclose = (event) => {
-      isConnectingWS.current = false;
-      console.log(`🔌 WebSocket cerrado. Código: ${event.code} - Razón: ${event.reason || 'No especificada'}`);
-      
-      // ✅ Solo reconectar si no fue un cierre intencional y la app sigue montada
-      if (event.code !== 1000 && event.code !== 1001 && isMounted.current) {
-        console.log('🔄 Intentando reconectar en 5 segundos...');
-        if (wsReconnectTimeout.current) {
-          clearTimeout(wsReconnectTimeout.current);
-        }
-        wsReconnectTimeout.current = setTimeout(() => {
-          if (isMounted.current) {
-            connectWebSocket();
+      const ws = new WebSocket(WS_URL);
+      ws.onopen = () => console.log('🔌 Conectado al asistente WebSocket');
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'action_result' && data.result?.message) {
+            setConversation(prev => [...prev, { role: currentAssistant.toLowerCase(), content: data.result.message, timestamp: Date.now() }]);
           }
-          wsReconnectTimeout.current = null;
-        }, 5000);
-      }
-    };
-    
-    ws.onerror = (error) => {
-      console.error('❌ Error en WebSocket:', error);
-      // No hacer nada, onclose manejará la reconexión
-    };
-    
-  } catch (error) {
-    isConnectingWS.current = false;
-    console.error('❌ Error creando WebSocket:', error);
-    if (wsReconnectTimeout.current) {
-      clearTimeout(wsReconnectTimeout.current);
-    }
-    wsReconnectTimeout.current = setTimeout(() => {
-      if (isMounted.current) {
-        connectWebSocket();
-      }
-      wsReconnectTimeout.current = null;
-    }, 5000);
-  }
-};
+        } catch (e) {}
+      };
+      ws.onclose = () => {
+        reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
+      };
+      wsRef.current = ws;
+    } catch (error) {}
+  };
 
   const initAudioAnalyzer = async () => {
     try {
@@ -655,6 +925,7 @@ function App() {
 
   // ===== ENVÍO INTERNO =====
   const sendToJarvisInternal = async (text) => {
+    // ✅ Limpiar timer cuando el usuario habla (NO iniciar nuevo)
     if (conversationModeRef.current) {
       if (inactivityTimer) {
         clearTimeout(inactivityTimer);
@@ -729,6 +1000,7 @@ function App() {
 
   // ===== ENVÍO PRINCIPAL =====
   const sendToJarvis = async (text) => {
+    // ✅ Limpiar timer cuando el usuario habla (NO iniciar nuevo)
     if (conversationModeRef.current) {
       if (inactivityTimer) {
         clearTimeout(inactivityTimer);
@@ -821,7 +1093,7 @@ function App() {
     await sendToJarvisInternal(text);
   };
 
-  // ===== TEXTO A VOZ =====
+  // ===== TEXTO A VOZ (MODIFICADO - AQUÍ SE INICIA EL TIMER) =====
   const speakText = async (text) => {
     window.speechSynthesis.cancel();
     
@@ -869,9 +1141,36 @@ function App() {
       isBusy.current = false;
       setIsProcessing(false);
       
+      // ✅ INICIAR timer SOLO después de que JARVIS terminó de hablar
       if (conversationModeRef.current) {
-        startInactivityTimer();
         console.log('🕐 JARVIS terminó de hablar, iniciando timer de inactividad...');
+        
+        // Limpiar timer existente
+        if (inactivityTimer) {
+          clearTimeout(inactivityTimer);
+          setInactivityTimer(null);
+        }
+        
+        // Crear nuevo timer
+        const timer = setTimeout(() => {
+          console.log('🔍🔍🔍 VERIFICANDO DESACTIVACIÓN después de 90s 🔍🔍🔍');
+          console.log('conversationMode:', conversationModeRef.current);
+          console.log('isJarvisSpeaking:', isJarvisSpeaking);
+          console.log('isProcessing:', isProcessing);
+          
+          if (conversationModeRef.current && !isJarvisSpeaking && !isProcessing) {
+            setConversationMode(false);
+            conversationModeRef.current = false;
+            console.log('💬💬💬 Modo conversación DESACTIVADO por inactividad 💬💬💬');
+            speakText("Modo conversación desactivado por inactividad. Di Jarvis cuando me necesites.");
+          } else {
+            console.log('⏸️ Desactivación cancelada - condiciones no cumplidas');
+          }
+          setInactivityTimer(null);
+        }, 90000);
+        
+        setInactivityTimer(timer);
+        console.log('⏰ Timer de inactividad INICIADO (90 segundos)');
       }
       
       setCooldown(true);
@@ -889,6 +1188,7 @@ function App() {
       isBusy.current = false;
       setCooldown(false);
       
+      // ✅ También iniciar timer en caso de error
       if (conversationModeRef.current) {
         console.log('🕐 Error en voz, iniciando timer de inactividad...');
         if (inactivityTimer) {
@@ -916,12 +1216,8 @@ function App() {
   // ===== RECONOCIMIENTO DE VOZ =====
   const initSpeechRecognition = () => {
     if (!('webkitSpeechRecognition' in window)) {
-      console.warn('⚠️ Speech Recognition no soportada en este navegador');
+      alert('Usá Chrome o Edge para reconocimiento de voz');
       return null;
-    }
-    
-    if (recognitionInstance.current) {
-      return recognitionInstance.current;
     }
     
     const SpeechRecognition = window.webkitSpeechRecognition;
@@ -929,86 +1225,49 @@ function App() {
     recognition.lang = 'es-ES';
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
     
-    recognition.onstart = () => {
-      isStartingRecognition.current = false;
-      setIsListening(true);
-      isListeningRef.current = true;
+    recognition.onstart = () => { 
+      setIsListening(true); 
       console.log('🎤 Escuchando...');
     };
     
     recognition.onend = () => {
       setIsListening(false);
-      isListeningRef.current = false;
       console.log('🎤 Dejó de escuchar');
       
-      if (restartTimeoutRef.current) {
-        clearTimeout(restartTimeoutRef.current);
-        restartTimeoutRef.current = null;
-      }
-      
-      if (isMounted.current && isAwakeRef.current && !isProcessing && !isJarvisSpeaking && !cooldown) {
-        restartTimeoutRef.current = setTimeout(() => {
-          if (isMounted.current && isAwakeRef.current && !isListeningRef.current && !isProcessing) {
-            startListening();
-          }
-          restartTimeoutRef.current = null;
-        }, 500);
+      if (conversationModeRef.current && isAwake && !isProcessing && !isJarvisSpeaking && !cooldown) {
+        console.log('💬 Modo conversación - reiniciando escucha...');
+        startListening();
+      } else if (isAwake && !conversationModeRef.current && !isProcessing && !isJarvisSpeaking && !cooldown) {
+        console.log('🔄 Reiniciando escucha (sin modo conversación)...');
+        setTimeout(() => startListening(), 500);
       }
     };
     
     recognition.onerror = (event) => {
-      console.log('🎤 Error en reconocimiento:', event.error);
-      setIsListening(false);
-      isListeningRef.current = false;
-      isStartingRecognition.current = false;
-      
+      console.log('🎤 Error:', event.error);
       if (event.error === 'not-allowed') {
         setIsAwake(false);
-        isAwakeRef.current = false;
-        console.warn('⚠️ Permiso de micrófono denegado');
-        return;
       }
-      
-      if (event.error === 'no-speech' || event.error === 'audio-capture') {
-        if (isMounted.current && isAwakeRef.current && !isProcessing && !isJarvisSpeaking) {
-          restartTimeoutRef.current = setTimeout(() => {
-            if (isMounted.current && isAwakeRef.current && !isListeningRef.current) {
-              startListening();
-            }
-            restartTimeoutRef.current = null;
-          }, 1000);
-        }
-        return;
-      }
-      
-      if (event.error !== 'aborted') {
-        console.warn('⚠️ Error no manejado en reconocimiento:', event.error);
+      if (event.error !== 'no-speech') {
+        console.log('🎤 Error no manejado:', event.error);
       }
     };
     
     recognition.onresult = async (event) => {
       let finalTranscript = '';
-      let interimTranscript = '';
-      
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        } else {
-          interimTranscript += event.results[i][0].transcript;
-        }
-      }
-      
-      if (interimTranscript) {
-        setTranscript(interimTranscript);
+        if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
       }
       
       if (finalTranscript) {
-        if (conversationModeRef.current && inactivityTimer) {
-          clearTimeout(inactivityTimer);
-          setInactivityTimer(null);
-          console.log('⏰ Timer REINICIADO (actividad del usuario)');
+        // ✅ Limpiar timer cuando el usuario habla (NO iniciar nuevo)
+        if (conversationModeRef.current) {
+          if (inactivityTimer) {
+            clearTimeout(inactivityTimer);
+            setInactivityTimer(null);
+            console.log('⏰ Timer limpiado (actividad detectada)');
+          }
         }
         
         setTranscript(finalTranscript);
@@ -1018,6 +1277,7 @@ function App() {
         const hasWakeWord = hasJarvis || hasGideon;
         
         console.log('🎤 Actividad detectada:', finalTranscript);
+        console.log('🎤 inactivityTimer actual:', inactivityTimer ? 'EXISTE' : 'null');
         
         if ((hasWakeWord || conversationModeRef.current) && !isProcessing) {
           console.log('🎤 Procesando comando:', finalTranscript);
@@ -1031,7 +1291,6 @@ function App() {
           if (hasGideon) command = finalTranscript.replace(/gideon/gi, '').trim();
           if (!command) command = 'hola';
           
-          stopListening();
           setIsProcessing(true);
           await sendToJarvis(command);
         } else {
@@ -1040,100 +1299,48 @@ function App() {
       }
     };
     
-    recognitionInstance.current = recognition;
     return recognition;
   };
 
   const startListening = () => {
-    if (isStartingRecognition.current) {
-      console.log('🎤 Ya se está iniciando el reconocimiento...');
+    if (isListening) {
       return;
     }
     
-    if (isListeningRef.current) {
-      console.log('🎤 Ya está escuchando');
+    if (!isAwake || isProcessing || isJarvisSpeaking || cooldown) {
       return;
     }
     
-    if (!isAwakeRef.current) {
-      console.log('🎤 Asistente dormido');
-      return;
+    if (!recognitionRef.current) {
+      recognitionRef.current = initSpeechRecognition();
     }
     
-    if (isProcessing || isJarvisSpeaking || cooldown) {
-      console.log('🎤 Ocupado (processing:', isProcessing, 'speaking:', isJarvisSpeaking, 'cooldown:', cooldown);
-      return;
-    }
-    
-    if (restartTimeoutRef.current) {
-      clearTimeout(restartTimeoutRef.current);
-      restartTimeoutRef.current = null;
-    }
-    
-    isStartingRecognition.current = true;
-    
-    if (!recognitionInstance.current) {
-      const recognition = initSpeechRecognition();
-      if (!recognition) {
-        isStartingRecognition.current = false;
-        console.warn('⚠️ No se pudo inicializar reconocimiento de voz');
-        return;
-      }
-    }
-    
-    try {
-      if (recognitionInstance.current) {
-        recognitionInstance.current.start();
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.start();
         console.log('🎤 Reconocimiento iniciado');
-        isStartingRecognition.current = false;
-      }
-    } catch (error) {
-      console.error('Error iniciando reconocimiento:', error);
-      isStartingRecognition.current = false;
-      
-      if (isMounted.current && isAwakeRef.current && !isListeningRef.current) {
-        restartTimeoutRef.current = setTimeout(() => {
-          if (isMounted.current && isAwakeRef.current && !isListeningRef.current && !isStartingRecognition.current) {
-            startListening();
-          }
-          restartTimeoutRef.current = null;
-        }, 1000);
+      } catch (e) {
+        console.error('Error iniciando:', e);
       }
     }
   };
 
   const stopListening = () => {
-    if (restartTimeoutRef.current) {
-      clearTimeout(restartTimeoutRef.current);
-      restartTimeoutRef.current = null;
-    }
-    
-    isStartingRecognition.current = false;
-    
-    if (recognitionInstance.current) {
-      try {
-        recognitionInstance.current.stop();
-        console.log('🎤 Reconocimiento detenido');
-      } catch (e) {
-        console.warn('Error deteniendo reconocimiento:', e);
-      }
+    if (recognitionRef.current) {
+      try { recognitionRef.current.stop(); } catch(e) {}
     }
     setIsListening(false);
-    isListeningRef.current = false;
   };
 
-  // ===== TOGGLE ASSISTANT =====
   const toggleAssistant = () => {
     if (isAwake) {
       shouldRestartRef.current = false;
       stopListening();
       setIsAwake(false);
-      isAwakeRef.current = false;
       setResponse(`${currentAssistant} desactivado`);
       speakText(`${currentAssistant} desactivado`);
     } else {
       setIsAwake(true);
-      isAwakeRef.current = true;
       shouldRestartRef.current = true;
       setResponse(`${currentAssistant} activado`);
       speakText(`${currentAssistant} activado`);
@@ -1141,78 +1348,35 @@ function App() {
     }
   };
 
-  // ===== EFECTOS PRINCIPALES =====
-  
-  // Efecto de inicialización
+  // Limpiar reconocimiento al desmontar
   useEffect(() => {
-    isMounted.current = true;
-    
-    connectWebSocket();
-    initAudioAnalyzer();
-    getUserLocation();
-    
-    // Inicializar reconocimiento después de un delay
-    const initTimer = setTimeout(() => {
-      if (isMounted.current && isAwakeRef.current) {
-        initSpeechRecognition();
-        startListening();
-      }
-    }, 2000);
-    
     return () => {
-      isMounted.current = false;
-      clearTimeout(initTimer);
-      
-      shouldRestartRef.current = false;
-      stopSpeaking();
-      stopListening();
-      
-      if (wsReconnectTimeout.current) {
-        clearTimeout(wsReconnectTimeout.current);
-        wsReconnectTimeout.current = null;
-      }
-      
-      if (wsInstance.current) {
+      if (recognitionRef.current) {
         try {
-          if (wsInstance.current.readyState === WebSocket.OPEN || wsInstance.current.readyState === WebSocket.CONNECTING) {
-            wsInstance.current.close(1000, 'Desconexión intencional');
-          }
-        } catch (e) {
-          console.warn('Error cerrando WebSocket:', e);
-        }
-        wsInstance.current = null;
-      }
-      isConnectingWS.current = false;
-      
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach(track => track.stop());
-        mediaStreamRef.current = null;
-      }
-      
-      if (audioContextRef.current) {
-        try {
-          audioContextRef.current.close();
-        } catch (e) {
-          console.warn('Error cerrando AudioContext:', e);
-        }
-        audioContextRef.current = null;
-      }
-      
-      if (recognitionInstance.current) {
-        try {
-          recognitionInstance.current.stop();
+          recognitionRef.current.stop();
         } catch (e) {}
-        recognitionInstance.current = null;
-      }
-      
-      if (restartTimeoutRef.current) {
-        clearTimeout(restartTimeoutRef.current);
-        restartTimeoutRef.current = null;
+        recognitionRef.current = null;
       }
     };
   }, []);
 
-  // Limpiar timers de inactividad
+  useEffect(() => {
+    connectWebSocket();
+    initAudioAnalyzer();
+    getUserLocation();
+    setTimeout(() => startListening(), 1000);
+    return () => {
+      shouldRestartRef.current = false;
+      stopSpeaking();
+      stopListening();
+      if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
+      if (wsRef.current) wsRef.current.close();
+      if (mediaStreamRef.current) mediaStreamRef.current.getTracks().forEach(track => track.stop());
+      if (audioContextRef.current) audioContextRef.current.close();
+    };
+  }, []);
+
+  // Limpiar timer al desmontar
   useEffect(() => {
     return () => {
       if (inactivityTimer) {
@@ -1224,7 +1388,6 @@ function App() {
     };
   }, []);
 
-  // ===== RENDER =====
   return (
     <div className="app">
       <div ref={threeContainerRef} className="three-container"></div>
@@ -1365,6 +1528,7 @@ function App() {
                 }}
               />
               
+              {/* Sección Spotify */}
               <div className="help-section" style={{ marginBottom: '15px' }}>
                 <div style={{ color: '#1DB954', fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>🎵 SPOTIFY</div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><span>"abre Spotify"</span><span style={{ color: '#aaa' }}>Abrir app</span></div>
@@ -1376,12 +1540,14 @@ function App() {
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}><span>"volumen al [1-100]"</span><span style={{ color: '#aaa' }}>Volumen exacto</span></div>
               </div>
 
+              {/* Sección Podcasts */}
               <div className="help-section" style={{ marginBottom: '15px' }}>
                 <div style={{ color: '#ffaa00', fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>🎙️ PODCASTS</div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><span>"reproduce el podcast [nombre]"</span><span style={{ color: '#aaa' }}>Buscar y reproducir</span></div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}><span>"busca el podcast de [nombre]"</span><span style={{ color: '#aaa' }}>Buscar podcast</span></div>
               </div>
 
+              {/* Sección Dispositivos */}
               <div className="help-section" style={{ marginBottom: '15px' }}>
                 <div style={{ color: '#00e5ff', fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>💡 DISPOSITIVOS</div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><span>"prendé la luz"</span><span style={{ color: '#aaa' }}>Encender luz</span></div>
@@ -1392,6 +1558,7 @@ function App() {
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}><span>"bajá la temperatura"</span><span style={{ color: '#aaa' }}>Bajar temp A/C</span></div>
               </div>
 
+              {/* Sección Programación */}
               <div className="help-section" style={{ marginBottom: '15px' }}>
                 <div style={{ color: '#44ffaa', fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>🎓 PROGRAMACIÓN</div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><span>"aprender programación"</span><span style={{ color: '#aaa' }}>Guía de estudio</span></div>
@@ -1401,12 +1568,14 @@ function App() {
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}><span>"recursos para [lenguaje]"</span><span style={{ color: '#aaa' }}>Links de aprendizaje</span></div>
               </div>
 
+              {/* Sección Búsqueda */}
               <div className="help-section" style={{ marginBottom: '15px' }}>
                 <div style={{ color: '#ff9933', fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>🔍 BÚSQUEDA</div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><span>"busca en internet [pregunta]"</span><span style={{ color: '#aaa' }}>Buscar en la web</span></div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}><span>"cuántas búsquedas me quedan"</span><span style={{ color: '#aaa' }}>Ver límite diario</span></div>
               </div>
 
+              {/* Sección Información */}
               <div className="help-section" style={{ marginBottom: '15px' }}>
                 <div style={{ color: '#fff', fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>ℹ️ INFORMACIÓN</div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><span>"qué hora es"</span><span style={{ color: '#aaa' }}>Hora actual</span></div>
@@ -1416,6 +1585,7 @@ function App() {
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}><span>"quién eres"</span><span style={{ color: '#aaa' }}>Presentación</span></div>
               </div>
 
+              {/* Sección Control de voz */}
               <div className="help-section" style={{ marginBottom: '15px' }}>
                 <div style={{ color: '#ff6666', fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>🎤 CONTROL DE VOZ</div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><span>"silencio" / "cortá" / "callate"</span><span style={{ color: '#aaa' }}>Dejar de hablar</span></div>
@@ -1423,6 +1593,7 @@ function App() {
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}><span>"pasa a Jarvis" / "pasa a Gideon"</span><span style={{ color: '#aaa' }}>Cambiar asistente</span></div>
               </div>
 
+              {/* Sección Archivos */}
               <div className="help-section">
                 <div style={{ color: '#88ff88', fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>📁 ARCHIVOS</div>
                 <div className="cmd-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><span>"lista tus archivos"</span><span style={{ color: '#aaa' }}>Listar archivos del servidor</span></div>
@@ -1438,3 +1609,61 @@ function App() {
 }
 
 export default App;
+```
+
+================================================================================
+📄 ARCHIVO: src\index.jsx
+📏 Tamaño: 0.21 KB
+📝 Tipo: jsx
+📍 Ruta: C:\Users\Soledad\Desktop\JARVIS-Frontend\src\index.jsx
+================================================================================
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+================================================================================
+📄 ARCHIVO: vite.config.js
+📏 Tamaño: 0.51 KB
+📝 Tipo: js
+📍 Ruta: C:\Users\Soledad\Desktop\JARVIS-Frontend\vite.config.js
+================================================================================
+
+```js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+    https: false, // 👈 HABILITAR HTTPS EN CLIENTE
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:3001',
+        changeOrigin: true,
+        secure: false // Aceptar certificado autofirmado
+      },
+      '/auth': {
+        target: 'http://127.0.0.1:3001',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  }
+});
+```
+
+================================================================================
+✅ BUNDLE GENERADO CORRECTAMENTE
+📊 Total de archivos: 7
+📦 Tamaño estimado: 0.06 MB
+================================================================================

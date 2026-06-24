@@ -1,0 +1,384 @@
+/* src/JarvisInterface.css */
+
+/* Reset y estilos base */
+.jarvis-app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #0a0a0f;
+  font-family: 'Courier New', monospace;
+  color: #00d4ff;
+  transition: all 0.5s ease;
+}
+
+/* Temas según acción */
+.theme-none {
+  background: #0a0a0f;
+}
+
+.theme-spotify {
+  background: radial-gradient(ellipse at center, #1a0a1a 0%, #0a0a0f 100%);
+  box-shadow: inset 0 0 100px rgba(29, 185, 84, 0.05);
+}
+
+.theme-tuya {
+  background: radial-gradient(ellipse at center, #0a1a1a 0%, #0a0a0f 100%);
+  box-shadow: inset 0 0 100px rgba(0, 229, 255, 0.05);
+}
+
+.theme-weather {
+  background: radial-gradient(ellipse at center, #1a1a0a 0%, #0a0a0f 100%);
+  box-shadow: inset 0 0 100px rgba(255, 170, 0, 0.05);
+}
+
+.theme-ps4 {
+  background: radial-gradient(ellipse at center, #0a0a1a 0%, #0a0a0f 100%);
+  box-shadow: inset 0 0 100px rgba(0, 50, 255, 0.05);
+}
+
+.theme-code_execution {
+  background: radial-gradient(ellipse at center, #0a1a0a 0%, #0a0a0f 100%);
+  box-shadow: inset 0 0 100px rgba(0, 255, 100, 0.05);
+}
+
+/* HUD Superior */
+.jarvis-hud-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+  z-index: 100;
+}
+
+.hud-branding {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stark-glow {
+  font-size: 16px;
+  font-weight: bold;
+  color: #00d4ff;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+  letter-spacing: 3px;
+}
+
+.system-version {
+  font-size: 10px;
+  color: rgba(0, 212, 255, 0.5);
+  letter-spacing: 2px;
+}
+
+.hud-status-node {
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  transition: all 0.5s ease;
+}
+
+.hud-status-node.active {
+  color: #00ff88;
+  border-color: #00ff88;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+  animation: pulse-status 2s ease-in-out infinite;
+}
+
+.hud-status-node.inactive {
+  color: #ff4444;
+  border-color: #ff4444;
+  opacity: 0.5;
+}
+
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Reactor Arc */
+.jarvis-core-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding-top: 80px;
+}
+
+.reactor-display {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-bottom: 40px;
+}
+
+.arc-reactor-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 212, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.arc-reactor-ring.outer {
+  width: 300px;
+  height: 300px;
+  border-width: 3px;
+  border-color: rgba(0, 212, 255, 0.2);
+  animation: spin-ring 20s linear infinite;
+}
+
+.arc-reactor-ring.middle {
+  width: 220px;
+  height: 220px;
+  top: 40px;
+  left: 40px;
+  border-width: 2px;
+  border-color: rgba(0, 212, 255, 0.15);
+  animation: spin-ring 15s linear infinite reverse;
+}
+
+.arc-reactor-ring.inner {
+  width: 150px;
+  height: 150px;
+  top: 75px;
+  left: 75px;
+  border-width: 2px;
+  border-color: rgba(0, 212, 255, 0.2);
+  animation: spin-ring 10s linear infinite;
+}
+
+.arc-reactor-ring.spinning-fast .arc-reactor-ring {
+  animation-duration: 5s !important;
+}
+
+.arc-core-nucleus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #00d4ff 0%, rgba(0, 212, 255, 0.3) 50%, transparent 70%);
+  box-shadow: 0 0 60px rgba(0, 212, 255, 0.3), 0 0 120px rgba(0, 212, 255, 0.1);
+  animation: pulse-core 2s ease-in-out infinite;
+}
+
+@keyframes spin-ring {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-core {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Terminal Output */
+.jarvis-terminal-output {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 212, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.terminal-header {
+  padding: 8px 20px;
+  background: rgba(0, 212, 255, 0.05);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(0, 212, 255, 0.5);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.05);
+}
+
+.terminal-body {
+  padding: 15px 20px;
+  min-height: 60px;
+}
+
+.jarvis-speech-bubble {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+.terminal-prompt {
+  color: #00d4ff;
+  font-weight: bold;
+}
+
+.action-alert-ticker {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(255, 170, 0, 0.1);
+  border: 1px solid rgba(255, 170, 0, 0.2);
+  border-radius: 4px;
+  font-size: 12px;
+  color: #ffaa00;
+  animation: flash-ticker 2s ease-in-out infinite;
+}
+
+.action-tag {
+  font-weight: bold;
+  color: #ffaa00;
+  text-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+}
+
+@keyframes flash-ticker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Input Dock */
+.jarvis-input-dock {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 700px;
+}
+
+.hud-input-form {
+  display: flex;
+  gap: 10px;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 212, 255, 0.1);
+  border-radius: 30px;
+  padding: 5px;
+}
+
+.hud-text-input {
+  flex: 1;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  outline: none;
+}
+
+.hud-text-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.hud-text-input:disabled {
+  opacity: 0.5;
+}
+
+.hud-send-btn {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #00d4ff, #0066ff);
+  border: none;
+  border-radius: 25px;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hud-send-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+}
+
+.hud-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .jarvis-hud-header {
+    padding: 8px 15px;
+  }
+  
+  .stark-glow {
+    font-size: 12px;
+  }
+  
+  .reactor-display {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .arc-reactor-ring.outer {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .arc-reactor-ring.middle {
+    width: 150px;
+    height: 150px;
+    top: 25px;
+    left: 25px;
+  }
+  
+  .arc-reactor-ring.inner {
+    width: 100px;
+    height: 100px;
+    top: 50px;
+    left: 50px;
+  }
+  
+  .arc-core-nucleus {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .jarvis-terminal-output {
+    bottom: 80px;
+  }
+  
+  .terminal-body {
+    padding: 10px 15px;
+  }
+  
+  .jarvis-speech-bubble {
+    font-size: 12px;
+  }
+  
+  .jarvis-input-dock {
+    bottom: 15px;
+  }
+  
+  .hud-text-input {
+    font-size: 12px;
+    padding: 10px 15px;
+  }
+  
+  .hud-send-btn {
+    padding: 10px 20px;
+    font-size: 10px;
+  }
+}

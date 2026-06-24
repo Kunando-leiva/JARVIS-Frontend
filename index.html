@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * ws: wss:;">
     <title>J.A.R.V.I.S. - Asistente Inteligente</title>
     <style>
       body { margin: 0; padding: 0; background: #000; }
@@ -10,6 +11,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/index.jsx?v=3"></script>
+    <script type="module" src="/src/index.jsx"></script>
   </body>
 </html>
